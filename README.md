@@ -148,10 +148,10 @@ $ yarn dev
 This project is licensed under the MIT License. For more details, please refer to the [LICENSE](LICENSE.md) file.
 
 
-Made with :heart: by <a href="https://github.com/maurodesouza" target="_blank">Mauro de Souza</a>
+Made with :heart: by <a href="https://github.com/Azhan787/" target="_blank">Azhan787</a>
 
 &#xa0;
 
 <a href="#top">Back to top</a>
 
-*Readme created with [Simple Readme](https://marketplace.visualstudio.com/items?itemName=maurodesouza.vscode-simple-readme)*
+*Readme created with [Simple Readme](https://marketplace.visualstudio.com/items?itemName=Azhan787.vscode-simple-readme)*
