@@ -1,4 +1,9 @@
-import { EditableIcon } from 'types';
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { observer } from 'mobx-react-lite';
+
+import { EditableIcon } from '#/types';
 
 type TechStyles = {
   height: number;
@@ -19,8 +24,11 @@ type TechsSectionProps = {
   styles: SectionStyles;
 };
 
-export function TechsSection(props: TechsSectionProps) {
+export const TechsSection = observer(function TechsSection(
+  props: TechsSectionProps
+) {
   const { content, styles: containerStyles } = props;
+  const t = useTranslations('ui.alts');
 
   const { icons, styles } = content;
   const { height } = styles;
@@ -47,7 +55,7 @@ export function TechsSection(props: TechsSectionProps) {
             <img
               style={{ height: `${height}px` }}
               key={name}
-              alt={`${name} logo`}
+              alt={t('tech-logo', { name })}
               src={path}
             />
           );
@@ -55,4 +63,4 @@ export function TechsSection(props: TechsSectionProps) {
       )}
     </div>
   );
-}
+});

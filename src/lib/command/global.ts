@@ -2,10 +2,10 @@ import type {
   CanvasSection,
   Extension,
   PanelsEnumType,
-  PanelSide,
   Renderable,
   Sections,
-} from 'types';
+} from '#/types';
+import type { AppLocale } from '#/i18n/locales';
 import type { Action } from './types';
 
 type PanelActions = {
@@ -17,21 +17,35 @@ type PanelActions = {
 
 export interface Actions {
   canvas: {
-    add: Action<Sections>;
-    remove: Action<string>;
-    edit: Action<{ id?: string; path: string; value: unknown }>;
-    setCurrentSection: Action<string>;
-    reorder: Action<string[]>;
-    duplicate: Action<string>;
-    moveUp: Action<string>;
-    moveDown: Action<string>;
-    clear: Action;
-    loadImportFile: Action;
-    import: Action<React.ChangeEvent<HTMLInputElement>>;
+    section: {
+      add: Action<Sections>;
+      remove: Action<string>;
+      edit: Action<{ id?: string; path: string; value: unknown }>;
+      activate: Action<string>;
+      duplicate: Action<string>;
+      moveUp: Action<string>;
+      moveDown: Action<string>;
+    };
+    sections: {
+      clear: Action;
+      reorder: Action<string[]>;
+    };
+    import: {
+      loadFile: Action;
+      apply: Action<React.ChangeEvent<HTMLInputElement>>;
+    };
+    preview: {
+      sections: Action<CanvasSection[] | undefined>;
+      apply: Action;
+    };
   };
 
   settings: {
     edit: Action<{ path: string; value: unknown }>;
+    preview: {
+      apply: Action;
+      reset: Action;
+    };
   };
 
   panel: {
@@ -48,9 +62,11 @@ export interface Actions {
     show: Action<string>;
   };
 
-  template: {
-    use: Action;
-    preview: Action<CanvasSection[] | undefined>;
+  generated: {
+    workflows: {
+      highlight: Action;
+      unhighlight: Action;
+    };
   };
 
   extensions: {
@@ -60,5 +76,9 @@ export interface Actions {
   theme: {
     use: Action<string>;
     toggle: Action;
+  };
+
+  locale: {
+    use: Action<AppLocale>;
   };
 }

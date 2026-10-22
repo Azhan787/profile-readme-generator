@@ -1,4 +1,4 @@
-import type { DeepKeys } from 'types/helpers';
+import type { DeepKeys } from '#/types/helpers';
 import { CommandBus } from './command-bus';
 import { InstanceRegistry } from './instance-registry';
 import { TransitionStore } from './transitions-store';
@@ -95,7 +95,7 @@ export class Command {
   }
 
   getActionsProxy(path: DeepKeys<Actions>[] = []): Actions {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    // biome-ignore lint/complexity/noUselessThisAlias: required to capture `this`
     const self = this;
 
     return new Proxy(() => {}, {

@@ -1,20 +1,26 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
 import { useMemo, useState } from 'react';
 
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
 
 import { Fields } from '#/components/molecules/fields';
+import { useTranslateField } from '#/hooks';
 
 import { views } from './views';
-import { capitalize } from 'utils';
 
 type Views = keyof typeof views;
 
 const Config = () => {
-  const router = useRouter();
+  const t = useTranslations('ui');
+  const translate = useTranslateField();
+  const searchParams = useSearchParams();
   const viewNames = useMemo(() => Object.keys(views), []);
 
-  const view = router.query['config-view'] as string;
+  const view = searchParams.get('config-view') ?? '';
   const hasMatch = viewNames.includes(view);
   const initialView = hasMatch ? view : viewNames[0];
 
@@ -25,11 +31,11 @@ const Config = () => {
   return (
     <>
       <Fields.Compound.Combobox
-        label="Select the stats to config"
+        label={t('stats-config.label')}
         defaultValue={currentTab}
         onChange={option => setCurrentTab(option.value)}
         options={viewNames.map(view => ({
-          label: view.split('-').map(capitalize).join(' '),
+          label: translate(view),
           value: view,
         }))}
       />

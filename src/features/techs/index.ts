@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import { techsSectionParser } from './parser';
 import { defaultTechsSectionConfig } from './default-config';
 
-import { actions } from 'lib/command';
-import { PanelsEnum, Sections } from 'types';
+import { actions } from '#/lib/command';
+import { PanelsEnum, Sections } from '#/types';
 
 const feature = {
   id: Sections.TECHS,
@@ -12,7 +12,7 @@ const feature = {
   presentation: {
     [PanelsEnum.NEW_SECTION]: {
       icon: 'cpu',
-      onClick: () => actions.canvas.add(Sections.TECHS),
+      onClick: () => actions.canvas.section.add(Sections.TECHS),
       name: 'Techs',
     },
 

@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import { musicSectionParser } from './parser';
 import { defaultMusicSectionConfig } from './default-config';
 
-import { actions } from 'lib/command';
-import { PanelsEnum, Sections } from 'types';
+import { actions } from '#/lib/command';
+import { PanelsEnum, Sections } from '#/types';
 
 const feature = {
   id: Sections.MUSIC,
@@ -12,7 +12,7 @@ const feature = {
   presentation: {
     [PanelsEnum.NEW_SECTION]: {
       icon: 'music',
-      onClick: () => actions.canvas.add(Sections.MUSIC),
+      onClick: () => actions.canvas.section.add(Sections.MUSIC),
       name: 'Music',
     },
 

@@ -1,7 +1,9 @@
+'use client';
+
 import { useEffect } from 'react';
 
-import { usePersistedState } from 'hooks';
-import { actions, command } from 'lib/command';
+import { usePersistedState } from '#/hooks';
+import { actions, command } from '#/lib/command';
 
 export function ThemeHandler() {
   function getSystemTheme() {
@@ -15,16 +17,12 @@ export function ThemeHandler() {
   const [storedTheme, setTheme] = usePersistedState('theme', getSystemTheme());
 
   function clearTheme() {
-    document.documentElement.classList.forEach(cls => {
-      if (cls.startsWith('theme-')) {
-        document.documentElement.classList.remove(cls);
-      }
-    });
+    document.documentElement.removeAttribute('data-theme');
   }
 
   function changeTheme(theme: string) {
     clearTheme();
-    document.documentElement.classList.add(`theme-${theme}`);
+    document.documentElement.setAttribute('data-theme', theme);
     setTheme(theme);
   }
 

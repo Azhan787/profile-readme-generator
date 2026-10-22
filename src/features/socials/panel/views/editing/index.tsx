@@ -1,3 +1,9 @@
+'use client';
+
+import { object } from '#/utils/object';
+import { url } from '#/utils/url';
+import { observer } from 'mobx-react-lite';
+
 import { useMemo, useRef } from 'react';
 import { AnimatePresence, Reorder } from 'framer-motion';
 
@@ -5,9 +11,8 @@ import { GroupFields } from '#/components/organisms/group-fields';
 import { IconEditor, IconEditorRef } from '#/components/molecules/icon-editor';
 import { Panel } from '#/components/organisms/panel';
 
-import { actions } from 'lib/command';
-import { useCanvas, useForceUpdate } from 'hooks';
-import { getDeepObjectProperty, getSocialImgUrl } from 'utils';
+import { actions } from '#/lib/command';
+import { useCanvas, useForceUpdate } from '#/hooks';
 
 import { fields, getIconFields } from './fields';
 import React from 'react';
@@ -45,7 +50,7 @@ const MemoizedIconEditor = React.memo(
         baseEditPath="content.socials"
         img={{
           alt: `${social} ${icon} logo`,
-          url: getSocialImgUrl('icon', social, { icon }),
+          url: url.getSocialImg('icon', social, { icon }),
         }}
         slots={{
           expansibleContent: () => (
@@ -73,14 +78,14 @@ const MemoizedIconEditor = React.memo(
   }
 );
 
-export function Editing() {
+export const Editing = observer(function Editing() {
   const iconEditorRefs = useRef<IconEditorRef[]>([]);
 
   const forceUpdate = useForceUpdate();
-  const { currentSection } = useCanvas();
+  const canvasStore = useCanvas();
 
-  const selectedSocials = getDeepObjectProperty<Socials>(
-    currentSection,
+  const selectedSocials = object.deep.get<Socials>(
+    canvasStore.$currentSection,
     'props.content.socials'
   )!;
 
@@ -105,7 +110,7 @@ export function Editing() {
       return obj;
     }, {} as Socials);
 
-    actions.canvas.edit({ path, value });
+    actions.canvas.section.edit({ path, value });
     setTimeout(forceUpdate, 200);
   }
 
@@ -132,4 +137,4 @@ export function Editing() {
       </AnimatePresence>
     </Panel.Scrollable>
   );
-}
+});

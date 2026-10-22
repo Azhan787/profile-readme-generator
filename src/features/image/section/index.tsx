@@ -1,3 +1,9 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { observer } from 'mobx-react-lite';
+
 type Content = {
   url: string;
 };
@@ -13,7 +19,8 @@ type ImageProps = {
   styles: Styles;
 };
 
-export function ImageSection(props: ImageProps) {
+export const ImageSection = observer(function ImageSection(props: ImageProps) {
+  const t = useTranslations('ui');
   const { content, styles } = props;
 
   const { url } = content;
@@ -21,7 +28,7 @@ export function ImageSection(props: ImageProps) {
 
   return (
     <div className="flex" style={{ justifyContent: align, float }}>
-      <img style={{ height: `${height}px` }} src={url} alt="Image" />
+      <img style={{ height: `${height}px` }} src={url} alt={t('alts.image')} />
     </div>
   );
-}
+});

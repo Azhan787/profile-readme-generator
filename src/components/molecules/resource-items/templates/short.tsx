@@ -1,5 +1,8 @@
+'use client';
+
 import { Text } from '#/components/atoms/text';
 import { Tile } from '#/components/atoms/tile';
+import { useTranslateField } from '#/hooks';
 import { ResourceItemProps } from '..';
 
 export function ShortResourceItem(props: ResourceItemProps) {
@@ -12,20 +15,22 @@ export function ShortResourceItem(props: ResourceItemProps) {
     linkTarget = '_blank',
   } = props;
 
+  const translate = useTranslateField();
+
   return (
     <Tile.Container className="h-auto flex-col">
       <div className="flex gap-md">
         <Tile.Img src={imageSrc} className="self-center" />
 
         <Tile.Content className="flex flex-col gap-1">
-          <Tile.Label>{title}</Tile.Label>
+          <Tile.Label>{translate(title)}</Tile.Label>
 
-          <Text.Paragraph>{description}</Text.Paragraph>
+          <Text.Paragraph>{translate(description)}</Text.Paragraph>
         </Tile.Content>
       </div>
 
       <Text.Link href={link} target={linkTarget} className="self-end">
-        {linkLabel}
+        {translate(linkLabel)}
       </Text.Link>
     </Tile.Container>
   );

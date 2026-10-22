@@ -1,10 +1,12 @@
+'use client';
+
 import { Canvas } from '#/components/organisms/canvas';
 import { Page } from '#/components/atoms/page';
 import { Panel } from '#/components/organisms/panel';
 import { PageFooter } from '#/components/molecules/page-footer';
-import { Clickable } from '#/components/atoms/clickable';
+import { GenerateReadmeButton } from '#/components/molecules/generate-readme-button';
 
-import { PanelsEnum } from 'types';
+import { PanelsEnum } from '#/types';
 
 const CanvasTemplate = () => {
   return (
@@ -20,9 +22,7 @@ const CanvasTemplate = () => {
           <PageFooter.Owner />
           <PageFooter.Navs />
 
-          <Clickable.Link tone="success" href="/result">
-            Generate README
-          </Clickable.Link>
+          <GenerateReadmeButton />
         </PageFooter.Container>
       </Page.Wrapper>
 

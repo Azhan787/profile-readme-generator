@@ -1,3 +1,9 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { tailwind } from '#/utils/tailwind';
+import { observer } from 'mobx-react-lite';
+
 import React, {
   createContext,
   useContext,
@@ -10,11 +16,10 @@ import React, {
 import { Icon } from '#/components/atoms/icon';
 
 import { panels } from '#/components/organisms/panels/panels';
-import { useExtensions, useOutsideClick, useMediaQuery } from 'hooks';
-import { command, actions } from 'lib/command';
+import { useExtensions, useOutsideClick, useMediaQuery } from '#/hooks';
+import { command, actions } from '#/lib/command';
 
-import { PanelsEnumType, PanelSide } from 'types';
-import { cn, getThemeToken, twx } from 'utils';
+import { PanelsEnumType, PanelSide } from '#/types';
 
 type PanelContextState = {
   isOpen: boolean;
@@ -92,7 +97,7 @@ function PanelContainer(props: React.PropsWithChildren) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const breakpoint = useMemo(() => {
-    return getThemeToken('--breakpoint-laptop', { fallbackReturn: '0px' });
+    return tailwind.getToken('--breakpoint-laptop', { fallbackReturn: '0px' });
   }, []);
 
   const [isLessThanLaptop] = useMediaQuery(`(max-width: ${breakpoint})`);
@@ -109,11 +114,12 @@ function PanelContainer(props: React.PropsWithChildren) {
 
   return (
     <div
-      className={cn(
+      className={tailwind.cn(
         'w-0 max-w-0 h-full relative laptop:w-full laptop:max-w-panel'
       )}
       ref={containerRef}
       {...props}
+      data-testid="panel"
     />
   );
 }
@@ -123,50 +129,53 @@ function PanelWrapper(props: React.PropsWithChildren) {
 
   return (
     <div
-      className={cn(
-        `absolute top-0 w-panel h-full bg-background-default p-md rounded-md box-border z-10 laptop:shadow-none`,
+      className={tailwind.cn(
+        `absolute top-0 w-panel h-full bg-palette-base p-md rounded-md box-border z-10 laptop:shadow-none`,
         side === 'left' ? 'left-0' : 'right-0',
         isOpen
           ? `shadow-panel-${side}`
           : 'max-laptop:border-none max-laptop:-z-10 max-laptop:shadow-none'
       )}
       {...props}
+      data-testid={`panel-wrapper-${side}`}
     />
   );
 }
 
 function PanelContent(props: React.PropsWithChildren) {
-  const { isOpen } = usePanel();
+  const { isOpen, side } = usePanel();
 
   return (
     <div
-      className={cn(
+      className={tailwind.cn(
         'w-full h-full flex flex-col',
         !isOpen && 'max-laptop:opacity-0 max-laptop:overflow-hidden'
       )}
       {...props}
+      data-testid={`panel-content-${side}`}
     />
   );
 }
 
-const Scrollable = twx.div`h-full w-[calc(100%+(var(--spacing-md)*2))] -ml-md pl-md pr-xs overflow-y-scroll scrollbar`;
+const Scrollable = tailwind.twx
+  .div`h-full w-[calc(100%+(var(--spacing-md)*2))] -ml-md pl-md pr-xs overflow-y-scroll scrollbar`;
 
-function PanelRender() {
+const PanelRender = observer(function PanelRender() {
   const { panel } = usePanel();
-  const { extensions } = useExtensions();
+  const extensionsStore = useExtensions();
 
   const allPanels = useMemo(
     () => ({
       ...panels,
-      ...(extensions.panels ?? {}),
+      ...(extensionsStore.extensions.panels ?? {}),
     }),
-    [extensions]
+    [extensionsStore.extensions]
   );
 
   const Panel = (allPanels[panel!] || React.Fragment) as React.ComponentType;
 
   return <Panel />;
-}
+});
 
 const percentageMap = {
   left: '70%',
@@ -175,6 +184,7 @@ const percentageMap = {
 
 function PanelToggle() {
   const { side, isOpen } = usePanel();
+  const t = useTranslations('ui.panel');
 
   const percentage = percentageMap[side];
   const isLeft = side === 'left';
@@ -200,12 +210,13 @@ function PanelToggle() {
   return (
     <button
       onClick={togglePanel}
-      aria-label={`Toggle ${side} panel`}
+      aria-label={t('toggle', { side })}
+      data-testid={`panel-toggle-${side}`}
       style={{
         transform: isOpen ? `translateX(${percentage})` : 'rotate(180deg)',
       }}
-      className={cn(
-        'absolute grid place-items-center top-md bg-background-default! box-border rounded-md p-[calc(var(--spacing-xs)/2)] z-20 laptop:hidden',
+      className={tailwind.cn(
+        'absolute grid place-items-center top-md bg-palette-base! box-border rounded-md p-[calc(var(--spacing-xs)/2)] z-20 laptop:hidden',
 
         getPositionClasses(),
         !isOpen && getBorderClasses()

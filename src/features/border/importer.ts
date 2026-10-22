@@ -1,8 +1,7 @@
-import { CanvasSection, Sections } from 'types';
+import { CanvasSection, Sections } from '#/types';
 import { defaultImageSectionConfig } from './default-config';
 import { v4 as uuid } from 'uuid';
 import type { Element } from 'hast';
-import { deepCopy } from 'utils/deepCopy';
 
 const _updateBorderConfig = (params: URLSearchParams, config: any): any => {
   config['type'] = params.get('type') || config['type'];
@@ -50,7 +49,7 @@ const _updateBorderConfig = (params: URLSearchParams, config: any): any => {
 };
 
 const borderImporter = (borderElement: Element): CanvasSection | null => {
-  const defaultConfig = deepCopy(defaultImageSectionConfig);
+  const defaultConfig = structuredClone(defaultImageSectionConfig) as any;
 
   if (borderElement.children.length === 0) return null;
 
@@ -64,11 +63,10 @@ const borderImporter = (borderElement: Element): CanvasSection | null => {
   const url = new URL(src);
   const params = url.searchParams;
 
-  defaultImageSectionConfig.props.content.borders['capsule-render'] =
-    _updateBorderConfig(
-      params,
-      defaultConfig.props.content.borders['capsule-render']
-    );
+  defaultConfig.props.content.borders['capsule-render'] = _updateBorderConfig(
+    params,
+    defaultConfig.props.content.borders['capsule-render']
+  );
 
   return {
     id: uuid(),

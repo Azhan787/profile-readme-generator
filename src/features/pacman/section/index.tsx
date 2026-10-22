@@ -1,3 +1,8 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { observer } from 'mobx-react-lite';
+
 import { GuardSection } from '#/components/organisms/sections/guard';
 
 const GAME_IMAGES: Record<string, string> = {
@@ -18,20 +23,19 @@ type PacmanSectionProps = {
   game?: string;
 };
 
-export function PacmanSection(props: PacmanSectionProps) {
+export const PacmanSection = observer(function PacmanSection(
+  props: PacmanSectionProps
+) {
   const { id, game = 'pacman' } = props;
+  const t = useTranslations('ui.alts');
 
   const src = GAME_IMAGES[game] ?? GAME_IMAGES['pacman'];
 
   return (
     <GuardSection sectionId={id}>
       <div className="grid place-items-center">
-        <img
-          className="w-full"
-          src={src}
-          alt={`An animation of ${game} eating the github user contributions (like ${game} game)`}
-        />
+        <img className="w-full" src={src} alt={t('pacman', { game })} />
       </div>
     </GuardSection>
   );
-}
+});

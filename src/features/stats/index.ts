@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import { statsSectionParser, statsWorkflowParser } from './parser';
 import { defaultStatsSectionConfig } from './default-config';
 
-import { actions } from 'lib/command';
-import { PanelsEnum, Sections } from 'types';
+import { actions } from '#/lib/command';
+import { PanelsEnum, Sections } from '#/types';
 
 const feature = {
   id: Sections.STATS,
@@ -12,7 +12,7 @@ const feature = {
   presentation: {
     [PanelsEnum.NEW_SECTION]: {
       icon: 'pie-chart',
-      onClick: () => actions.canvas.add(Sections.STATS),
+      onClick: () => actions.canvas.section.add(Sections.STATS),
       name: 'Stats',
     },
 

@@ -1,3 +1,5 @@
+'use client';
+
 import React, {
   forwardRef,
   useEffect,
@@ -11,8 +13,8 @@ import { Icon } from '#/components/atoms/icon';
 import { Clickable } from '#/components/atoms/clickable';
 import { FlexibleRender } from '#/components/helpers/flexible-render';
 
-import { actions } from 'lib/command';
-import { Renderable } from 'types';
+import { actions } from '#/lib/command';
+import { Renderable } from '#/types';
 
 type IconEditorProps = {
   id: string;
@@ -48,7 +50,7 @@ const IconEditor: React.ForwardRefRenderFunction<
   function deleteIcon() {
     const path = `${props.baseEditPath}.${props.id}`;
 
-    actions.canvas.edit({ path, value: undefined });
+    actions.canvas.section.edit({ path, value: undefined });
   }
 
   function toggleExpansible() {
@@ -103,7 +105,7 @@ const IconEditor: React.ForwardRefRenderFunction<
           <Clickable.Button
             size="icon"
             variant="icon"
-            tone="danger"
+            className="palette-danger"
             onClick={deleteIcon}
           >
             <Icon name="trash" />
@@ -113,7 +115,7 @@ const IconEditor: React.ForwardRefRenderFunction<
             <Clickable.Button
               size="icon"
               variant="icon"
-              tone="brand"
+              className="palette-blue"
               onClick={toggleExpansible}
             >
               <Icon name="edit-2" />

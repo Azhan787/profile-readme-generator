@@ -1,4 +1,10 @@
-import { getSocialImgUrl } from 'utils';
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { url } from '#/utils/url';
+import { observer } from 'mobx-react-lite';
+import type { ReactNode } from 'react';
 
 type SocialStyles = {
   type: 'icon' | 'badge';
@@ -30,8 +36,11 @@ type SocialSectionProps = {
   styles: SectionStyles;
 };
 
-export function SocialsSection(props: SocialSectionProps) {
+export const SocialsSection = observer(function SocialsSection(
+  props: SocialSectionProps
+) {
   const { content, styles: containerStyles } = props;
+  const t = useTranslations('ui.alts');
 
   const { socials, styles } = content;
   const { type, style, height } = styles;
@@ -46,18 +55,26 @@ export function SocialsSection(props: SocialSectionProps) {
       {Object.entries(socials).map(([social, { link, ...rest }]) => {
         const props = { ...rest, style };
 
-        const Wrapper = link ? 'a' : ({ children }: any) => <>{children}</>;
+        const Wrapper = link
+          ? 'a'
+          : ({
+              children,
+            }: {
+              children: ReactNode;
+              href?: string;
+              target?: string;
+            }) => <>{children}</>;
 
         return (
           <Wrapper href={link} key={social} target="_blank">
             <img
               style={{ height: `${height}px` }}
-              alt={`${social} logo`}
-              src={getSocialImgUrl(type, social, props)}
+              alt={t('social-logo', { social })}
+              src={url.getSocialImg(type, social, props)}
             />
           </Wrapper>
         );
       })}
     </div>
   );
-}
+});

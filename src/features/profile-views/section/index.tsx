@@ -1,17 +1,24 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { object } from '#/utils/object';
+import { url } from '#/utils/url';
+import { observer } from 'mobx-react-lite';
+
 import { GuardSection } from '#/components/organisms/sections/guard';
-import { getProfileViewsUrl, objectToQueryParams } from 'utils';
 
-import { useSettings } from 'hooks';
-import { Params } from 'types';
+import { useSettings } from '#/hooks';
+import { Params } from '#/types';
 
-type Providers = Parameters<typeof getProfileViewsUrl>[0];
+type Providers = Parameters<typeof url.getProfileViews>[0];
 
 type Views = {
   [key in Providers]: Params;
 };
 
 type Content = {
-  provider: Parameters<typeof getProfileViewsUrl>[0];
+  provider: Parameters<typeof url.getProfileViews>[0];
   views: Views;
 };
 
@@ -25,16 +32,19 @@ type ProfileViewsProps = {
   styles: Styles;
 };
 
-export function ProfileViewsSection(props: ProfileViewsProps) {
+export const ProfileViewsSection = observer(function ProfileViewsSection(
+  props: ProfileViewsProps
+) {
   const { id, content, styles } = props;
 
-  const { settings } = useSettings();
+  const t = useTranslations('ui');
+  const settingsStore = useSettings();
 
   const { provider, views } = content;
-  const { github = '' } = settings.user;
+  const { github = '' } = settingsStore.$settings.user;
 
-  const url = getProfileViewsUrl(provider, github as string);
-  const fullUrl = `${url}${objectToQueryParams(views[provider])}`;
+  const srcUrl = url.getProfileViews(provider, github as string);
+  const fullUrl = `${srcUrl}${object.toQueryParams(views[provider])}`;
 
   return (
     <GuardSection sectionId={id}>
@@ -42,8 +52,8 @@ export function ProfileViewsSection(props: ProfileViewsProps) {
         className="flex flex-wrap gap-sm"
         style={{ justifyContent: styles.align }}
       >
-        <img src={fullUrl} alt="Profile views count" />
+        <img src={fullUrl} alt={t('alts.profile-views')} />
       </div>
     </GuardSection>
   );
-}
+});

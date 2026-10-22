@@ -1,3 +1,13 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { array } from '#/utils/array';
+import { fn } from '#/utils/fn';
+import { string } from '#/utils/string';
+import { tailwind } from '#/utils/tailwind';
+import { observer } from 'mobx-react-lite';
+
 import React, { useMemo, useRef, useState } from 'react';
 
 import { Fields } from '#/components/molecules/fields';
@@ -5,11 +15,10 @@ import { Text } from '#/components/atoms/text';
 import { Panel } from '#/components/organisms/panel';
 import { DisplayBlock } from '#/components/atoms/display-block';
 
-import { actions } from 'lib/command';
-import { useCanvas, useForceUpdate } from 'hooks';
-import { capitalize, cn, debounce, filterArrayByQueryMatch } from 'utils';
+import { actions } from '#/lib/command';
+import { useCanvas, useForceUpdate } from '#/hooks';
 
-import { tech_icons } from 'resources';
+import { tech_icons } from '#/resources';
 import {
   CanvasContent,
   CanvasSection,
@@ -17,24 +26,25 @@ import {
   Icon,
   IconProviders,
   Sections,
-} from 'types';
+} from '#/types';
 
 type Providers = IconProviders | 'all';
 
-export function Adding() {
+export const Adding = observer(function Adding() {
+  const t = useTranslations('ui');
   const inputRef = useRef<HTMLInputElement>(null);
   const [provider, setProvider] = useState<Providers>(IconProviders.DEVICONS);
 
   const forceUpdate = useForceUpdate();
-  const { sections } = useCanvas();
+  const canvasStore = useCanvas();
 
   const usedIcons = useMemo(() => {
-    const techsSection = sections.find(
+    const techsSection = canvasStore.sections.find(
       (section: CanvasSection) => section.type === Sections.TECHS
     );
     const content = techsSection?.props.content as CanvasContent;
     return Object.keys(content?.icons || {});
-  }, [sections]);
+  }, [canvasStore.sections]);
 
   const groupIcons = useMemo(() => {
     const result: GroupIcons = {
@@ -57,7 +67,7 @@ export function Adding() {
     const result: GroupIcons = {};
 
     function filter(provider: IconProviders) {
-      return filterArrayByQueryMatch(value, groupIcons[provider], [
+      return array.filterByQueryMatch(value, groupIcons[provider], [
         'name',
         'alias',
       ]);
@@ -77,14 +87,14 @@ export function Adding() {
       const path = `content.icons.${icon.name}`;
 
       if (isUsed) {
-        actions.canvas.edit({ path, value: undefined });
+        actions.canvas.section.edit({ path, value: undefined });
       } else {
         const value = {
           ...icon,
           currentProvider: provider,
           config: {},
         };
-        actions.canvas.edit({ path, value });
+        actions.canvas.section.edit({ path, value });
       }
     };
   }
@@ -96,18 +106,18 @@ export function Adding() {
     <>
       <div className="flex gap-md mb-md">
         <Fields.Compound.Input
-          label="Search"
+          label={t('field-combobox.search-label')}
           ref={inputRef}
-          onInput={debounce(forceUpdate, 200)}
-          placeholder="Icon..."
+          onInput={fn.debounce(forceUpdate, 200)}
+          placeholder={t('field-combobox.icon-placeholder')}
         />
 
         <Fields.Compound.Combobox
           value={IconProviders.DEVICONS}
-          label="Provider"
+          label={t('techs.provider-label')}
           onChange={option => setProvider(option.value as Providers)}
           options={[
-            { value: 'all', label: 'all' },
+            { value: 'all', label: t('field-combobox.all') },
             ...Object.values(IconProviders).map(value => ({
               label: value.replace('_', ' '),
               value,
@@ -131,15 +141,15 @@ export function Adding() {
                 <React.Fragment key={providerName}>
                   {provider === 'all' && (
                     <div
-                      className={cn(
+                      className={tailwind.cn(
                         'col-span-3 pb-md',
-                        index > 0 && 'border-t border-ring-inner mt-md pt-md'
+                        index > 0 && 'border-t border-palette-line mt-md pt-md'
                       )}
                     >
                       <Text.Strong>
                         {providerName
                           .split('_')
-                          .map(w => capitalize(w))
+                          .map(w => string.capitalize(w))
                           .join(' ')}
                       </Text.Strong>
                     </div>
@@ -157,7 +167,7 @@ export function Adding() {
                         onClick={handleAddTech(icon, providerName, isUsed)}
                       >
                         <DisplayBlock.Container
-                          className={cn(isUsed && 'is-used')}
+                          className={tailwind.cn(isUsed && 'is-used')}
                         >
                           <DisplayBlock.Content>
                             <img
@@ -185,4 +195,4 @@ export function Adding() {
       </Panel.Scrollable>
     </>
   );
-}
+});

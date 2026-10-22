@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import { profileViewsSectionParser } from './parser';
 import { defaultProfileViewsSectionConfig } from './default-config';
 
-import { actions } from 'lib/command';
-import { PanelsEnum, Sections } from 'types';
+import { actions } from '#/lib/command';
+import { PanelsEnum, Sections } from '#/types';
 
 const feature = {
   id: Sections.PROFILE_VIEWS,
@@ -12,7 +12,7 @@ const feature = {
   presentation: {
     [PanelsEnum.NEW_SECTION]: {
       icon: 'telescope',
-      onClick: () => actions.canvas.add(Sections.PROFILE_VIEWS),
+      onClick: () => actions.canvas.section.add(Sections.PROFILE_VIEWS),
       name: 'Profile views',
     },
 

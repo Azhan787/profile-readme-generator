@@ -1,3 +1,7 @@
+'use client';
+
+import { observer } from 'mobx-react-lite';
+
 import { useMemo } from 'react';
 import { Reorder } from 'framer-motion';
 
@@ -10,20 +14,23 @@ import { SectionContextMenu } from '#/components/molecules/context-menu-section'
 import { Welcome } from '#/components/molecules/welcome';
 import { CanvasSection } from '#/components/molecules/canvas-section';
 
-import { actions } from 'lib/command';
-import { useCanvas, useExtensions } from 'hooks';
+import { actions } from '#/lib/command';
+import { useCanvas, useExtensions } from '#/hooks';
 
 import { CanvasErrorFallback } from './error';
 import { CanvasActions } from './actions';
 
-export function Canvas() {
-  const { extensions } = useExtensions();
-  const { sections } = useCanvas();
+export const Canvas = observer(function Canvas() {
+  const extensionsStore = useExtensions();
+  const canvasStore = useCanvas();
 
-  const sectionIds = sections.map(section => section.id);
-  const hasSection = !!sections.length;
+  const sectionIds = canvasStore.$canvas.map(section => section.id);
+  const hasSection = !!canvasStore.$canvas.length;
 
-  const sectionsData = useMemo(() => extensions.sections ?? {}, [extensions]);
+  const sectionsData = useMemo(
+    () => extensionsStore.extensions.sections ?? {},
+    [extensionsStore.extensions]
+  );
 
   return (
     <OnlyClientSide>
@@ -34,9 +41,9 @@ export function Canvas() {
             <Reorder.Group
               axis="y"
               values={sectionIds}
-              onReorder={actions.canvas.reorder}
+              onReorder={actions.canvas.sections.reorder}
             >
-              {sections.map(({ type, id, props }) => {
+              {canvasStore.$canvas.map(({ type, id, props }) => {
                 const section = sectionsData[type] as any;
                 if (!section) return null;
 
@@ -62,4 +69,4 @@ export function Canvas() {
       </div>
     </OnlyClientSide>
   );
-}
+});

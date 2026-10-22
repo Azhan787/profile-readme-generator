@@ -1,7 +1,6 @@
+import { tailwind } from '#/utils/tailwind';
 import { Reorder } from 'framer-motion';
 import { tv, VariantProps } from 'tailwind-variants';
-
-import { twx } from 'utils';
 
 const containerVariants = tv({
   base: '[&+&]:mt-[calc(var(--spacing-md)/2)] [&[data-hasfloat=true]+&]:pt-xl [&[data-hasfloat=true]+&]:mt-0',
@@ -28,18 +27,18 @@ const containerVariants = tv({
 type ContainerProps = React.ComponentProps<typeof Reorder.Item> &
   VariantProps<typeof containerVariants>;
 
-const Container = twx(Reorder.Item)<ContainerProps>(props =>
+const Container = tailwind.twx(Reorder.Item)<ContainerProps>(props =>
   containerVariants(props)
 );
 
 const wrapperVariants = tv({
-  base: 'w-[-webkit-fill-available] flex flex-col p-sm box-border border-transparent! hover:border-tone-luminosity-300!',
+  base: 'w-[-webkit-fill-available] flex flex-col p-sm box-border border-transparent! hover:border-palette-ring!',
   variants: {
     state: {
       default: '',
-      selected: 'border-tone-luminosity-300!',
+      selected: 'border-palette-ring!',
       preview: 'cursor-default! **:cursor-default! hover:border-transparent!',
-      alert: 'tone palette-warning border-tone-luminosity-300! border-dashed!',
+      alert: 'palette-orange border-palette-base! border-dashed!',
     },
   },
 
@@ -51,7 +50,9 @@ const wrapperVariants = tv({
 type WrapperProps = React.ComponentProps<'button'> &
   VariantProps<typeof wrapperVariants>;
 
-const Wrapper = twx.button<WrapperProps>(props => wrapperVariants(props));
+const Wrapper = tailwind.twx.button<WrapperProps>(props =>
+  wrapperVariants(props)
+);
 
 export const Section = {
   Container,

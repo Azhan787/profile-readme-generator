@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import { pacmanSectionParser, pacmanWorkflowParser } from './parser';
 import { defaultPacmanSectionConfig } from './default-config';
 
-import { actions } from 'lib/command';
-import { PanelsEnum, Sections } from 'types';
+import { actions } from '#/lib/command';
+import { PanelsEnum, Sections } from '#/types';
 
 const feature = {
   id: Sections.PACMAN,
@@ -12,7 +12,7 @@ const feature = {
   presentation: {
     [PanelsEnum.NEW_SECTION]: {
       icon: 'ghost',
-      onClick: () => actions.canvas.add(Sections.PACMAN),
+      onClick: () => actions.canvas.section.add(Sections.PACMAN),
       name: 'Arcade games',
     },
 

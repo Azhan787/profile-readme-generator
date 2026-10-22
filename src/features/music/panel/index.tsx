@@ -1,7 +1,11 @@
-import { GroupFields } from '#/components/organisms/group-fields';
-import { getDeepObjectProperty } from 'utils';
+'use client';
 
-import { useCanvas } from 'hooks';
+import { object } from '#/utils/object';
+import { observer } from 'mobx-react-lite';
+
+import { GroupFields } from '#/components/organisms/group-fields';
+
+import { useCanvas } from '#/hooks';
 import { views } from './views';
 
 import { groups } from './fields';
@@ -9,10 +13,13 @@ import { Panel } from '#/components/organisms/panel';
 
 type Views = keyof typeof views;
 
-export function MusicEditPanel() {
-  const { currentSection: obj } = useCanvas();
+export const MusicEditPanel = observer(function MusicEditPanel() {
+  const canvasStore = useCanvas();
 
-  const currentView = getDeepObjectProperty<Views>(obj, 'props.content.type')!;
+  const currentView = object.deep.get<Views>(
+    canvasStore.$currentSection,
+    'props.content.type'
+  )!;
 
   const View = views[currentView];
 
@@ -25,4 +32,4 @@ export function MusicEditPanel() {
       <View />
     </Panel.Scrollable>
   );
-}
+});

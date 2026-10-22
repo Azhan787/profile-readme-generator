@@ -1,29 +1,37 @@
-import { actions } from 'lib/command';
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { actions } from '#/lib/command';
 
 import { Text } from '#/components/atoms/text';
 import { ShareModal } from '#/components/molecules/share-modal';
 import { DisplayBlock } from '#/components/atoms/display-block';
 
-import { templates } from 'resources';
-import { CanvasSection } from 'types';
+import { templates } from '#/resources';
+import { CanvasSection, PanelsEnum } from '#/types';
 
 const MAX_TEMPLATES_DISPLAY = 8;
 
 export function Welcome() {
+  const t = useTranslations('ui');
+
   return (
-    <div className="flex flex-col items-center justify-between text-center pt-[calc(var(--spacing-xl)_*_3)]">
+    <div
+      data-testid="welcome"
+      className="flex flex-col items-center justify-between text-center pt-[calc(var(--spacing-xl)*3)]"
+    >
       <div className="flex flex-col gap-xs mb-md">
-        <Text.Heading>Welcome To Profile Readme Generator</Text.Heading>
+        <Text.Heading>{t('welcome.heading')}</Text.Heading>
         <Text.Heading as="h3">
-          <span className="hidden tablet:inline">🚀</span> The best profile
-          readme generator you will find
+          <span className="hidden tablet:inline">🚀</span>{' '}
+          {t('welcome.subheading')}{' '}
           <span className="hidden tablet:inline">⚡</span>
         </Text.Heading>
       </div>
 
-      <Text.Paragraph className="max-w-[46rem] mb-xl mt-md">
-        You can create you readme manually by clicking on the options on the
-        left or using one of the templates with some structure already made!
+      <Text.Paragraph className="max-w-184 mb-xl mt-md">
+        {t('welcome.description')}
       </Text.Paragraph>
 
       <div className="hidden w-full max-w-[60rem] flex-col gap-md pb-xl tablet:flex">
@@ -33,9 +41,10 @@ export function Welcome() {
             .map(({ template }, index) => (
               <button
                 key={index}
-                onClick={() =>
-                  actions.template.preview(template as CanvasSection[])
-                }
+                onClick={() => {
+                  actions.canvas.preview.sections(template as CanvasSection[]);
+                  actions.panel.right.show(PanelsEnum.TEMPLATES);
+                }}
               >
                 <DisplayBlock.Container>
                   <DisplayBlock.Content>
@@ -48,23 +57,23 @@ export function Welcome() {
             ))}
         </div>
 
-        <Text.Small>*Click to preview one of the templates options</Text.Small>
+        <Text.Small>{t('welcome.template-hint')}</Text.Small>
       </div>
 
       <Text.Paragraph className="max-w-96 mt-auto">
-        If you like it, give the{' '}
+        {t('welcome.footer-before-repo')}{' '}
         <Text.Link
           href="https://github.com/maurodesouza/profile-readme-generator"
           target="_blank"
           rel="noreferrer"
         >
-          project repository
+          {t('welcome.footer-repo')}
         </Text.Link>{' '}
-        a star on Github and{' '}
+        {t('welcome.footer-before-share')}{' '}
         <Text.Clickable onClick={() => actions.modal.open(ShareModal)}>
-          share
+          {t('welcome.footer-share')}
         </Text.Clickable>{' '}
-        with your friends!! I will be happy with it! ❤
+        {t('welcome.footer-after-share')}
       </Text.Paragraph>
     </div>
   );

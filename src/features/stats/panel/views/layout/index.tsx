@@ -1,10 +1,14 @@
+'use client';
+
+import { object } from '#/utils/object';
+import { observer } from 'mobx-react-lite';
+
 import { AnimatePresence, Reorder } from 'framer-motion';
 import { GroupFields } from '#/components/organisms/group-fields';
 
-import { useCanvas, useForceUpdate } from 'hooks';
-import { getDeepObjectProperty } from 'utils';
+import { useCanvas, useForceUpdate } from '#/hooks';
 
-import { actions } from 'lib/command';
+import { actions } from '#/lib/command';
 import { Item } from './item';
 
 import { groups } from './fields';
@@ -13,16 +17,16 @@ type Stats = {
   [key: string]: Stats;
 };
 
-export function Layout() {
+export const Layout = observer(function Layout() {
   const forceUpdate = useForceUpdate();
-  const { currentSection } = useCanvas();
+  const canvasStore = useCanvas();
 
-  const selectedStats = getDeepObjectProperty<Stats>(
-    currentSection,
+  const selectedStats = object.deep.get<Stats | undefined>(
+    canvasStore.$currentSection,
     'props.content.graphs'
-  )!;
+  );
 
-  const stats = Object.entries(selectedStats);
+  const stats = selectedStats ? Object.entries(selectedStats) : [];
   const stats_types = stats.map(tech => tech[0]);
 
   function onReorder(order: typeof stats_types) {
@@ -36,7 +40,7 @@ export function Layout() {
       return obj;
     }, {} as Stats);
 
-    actions.canvas.edit({ path, value });
+    actions.canvas.section.edit({ path, value });
     setTimeout(forceUpdate, 200);
   }
 
@@ -55,4 +59,4 @@ export function Layout() {
       </AnimatePresence>
     </div>
   );
-}
+});

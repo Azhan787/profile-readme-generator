@@ -1,31 +1,19 @@
-import compose from 'next-compose-plugins';
-
 import analyzer from '@next/bundle-analyzer';
-import pwa from 'next-pwa';
+import createNextIntlPlugin from 'next-intl/plugin';
 
 const withBundleAnalyzer = analyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const withPWA = pwa({
-  dest: 'public',
-  disable: process.env.NODE_ENV !== 'production',
-});
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  i18n: {
-    locales: ['en', 'es', 'pt-BR', 'fr', 'de'],
-    defaultLocale: 'en',
-  },
-
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
+  output: 'standalone',
+  allowedDevOrigins: ['127.0.0.1', 'localhost'],
   typescript: {
     ignoreBuildErrors: true,
   },
 };
 
-export default compose([withBundleAnalyzer, withPWA], nextConfig);
+export default withBundleAnalyzer(withNextIntl(nextConfig));

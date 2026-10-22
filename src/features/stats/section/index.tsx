@@ -1,10 +1,16 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { object } from '#/utils/object';
+import { url } from '#/utils/url';
+import { observer } from 'mobx-react-lite';
+
 import { GuardSection } from '#/components/organisms/sections/guard';
 
-import { useSettings } from 'hooks';
-import { getStatsUrl, objectToQueryParams } from 'utils';
+import { useSettings } from '#/hooks';
 
 type Obj = Record<string, unknown>;
-type Graphs = Parameters<typeof getStatsUrl>[0];
+type Graphs = Parameters<typeof url.getStats>[0];
 
 type Content = {
   graphs: {
@@ -29,12 +35,15 @@ const mapProperties = {
   center: 'center',
 };
 
-export function StatsSection(props: StatsSectionProps) {
+export const StatsSection = observer(function StatsSection(
+  props: StatsSectionProps
+) {
   const { id, content, styles: containerStyles } = props;
-  const { settings } = useSettings();
+  const settingsStore = useSettings();
+  const t = useTranslations('ui.alts');
 
   const { graphs } = content;
-  const { github } = settings.user;
+  const { github } = settingsStore.$settings.user;
 
   function getStyles() {
     if (containerStyles.direction === 'column') {
@@ -58,19 +67,19 @@ export function StatsSection(props: StatsSectionProps) {
         }}
       >
         {(Object.entries(graphs) as [Graphs, Obj][]).map(([graph, props]) => {
-          const url = getStatsUrl(graph as Graphs, github!);
+          const srcUrl = url.getStats(graph as Graphs, github!);
 
           const { height = '', show = false, ...rest } = { ...props };
           if (!graph || !show) return null;
 
-          const fullUrl = `${url}&${objectToQueryParams(rest as Obj)}`;
+          const fullUrl = `${srcUrl}&${object.toQueryParams(rest as Obj)}`;
 
           return (
             <img
               height={Number(height || 150)}
               key={graph}
               src={fullUrl}
-              alt={`${graph} graph`}
+              alt={t('graph', { graph })}
               className="max-w-full"
             />
           );
@@ -78,4 +87,4 @@ export function StatsSection(props: StatsSectionProps) {
       </div>
     </GuardSection>
   );
-}
+});

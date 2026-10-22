@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import { socialsSectionParser } from './parser';
 import { defaultSocialsSectionConfig } from './default-config';
 
-import { actions } from 'lib/command';
-import { PanelsEnum, Sections } from 'types';
+import { actions } from '#/lib/command';
+import { PanelsEnum, Sections } from '#/types';
 
 const feature = {
   id: Sections.SOCIALS,
@@ -12,7 +12,7 @@ const feature = {
   presentation: {
     [PanelsEnum.NEW_SECTION]: {
       icon: 'message-square',
-      onClick: () => actions.canvas.add(Sections.SOCIALS),
+      onClick: () => actions.canvas.section.add(Sections.SOCIALS),
       name: 'Social Media',
     },
 

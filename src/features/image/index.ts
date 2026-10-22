@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import { imageSectionParser } from './parser';
 import { defaultImageSectionConfig } from './default-config';
 
-import { actions } from 'lib/command';
-import { PanelsEnum, Sections } from 'types';
+import { actions } from '#/lib/command';
+import { PanelsEnum, Sections } from '#/types';
 
 const feature = {
   id: Sections.IMAGE,
@@ -12,7 +12,7 @@ const feature = {
   presentation: {
     [PanelsEnum.NEW_SECTION]: {
       icon: 'image',
-      onClick: () => actions.canvas.add(Sections.IMAGE),
+      onClick: () => actions.canvas.section.add(Sections.IMAGE),
       name: 'Image',
     },
 

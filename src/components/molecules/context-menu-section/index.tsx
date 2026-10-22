@@ -1,3 +1,9 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { observer } from 'mobx-react-lite';
+
 import { IconName } from 'lucide-react/dynamic';
 
 import { actions } from './actions';
@@ -5,56 +11,66 @@ import { actions } from './actions';
 import { Icon } from '#/components/atoms/icon';
 import { ContextMenu } from '#/components/atoms/context-menu';
 
-import { useCanvas } from 'hooks';
-import { actions as commandActions } from 'lib/command';
+import { useCanvas, useTranslateField } from '#/hooks';
+import { actions as commandActions } from '#/lib/command';
 
 type SectionContextMenuProps = {
   id: string;
 };
 
-export function SectionContextMenu(props: SectionContextMenuProps) {
-  const { sections } = useCanvas();
+export const SectionContextMenu = observer(function SectionContextMenu(
+  props: SectionContextMenuProps
+) {
+  const tUi = useTranslations('ui');
+  const translate = useTranslateField();
+  const canvasStore = useCanvas();
 
-  const sectionIndex = sections.findIndex(section => section.id === props.id);
+  const sectionIndex = canvasStore.sections.findIndex(
+    section => section.id === props.id
+  );
 
   const isFirst = sectionIndex === 0;
-  const isLast = sectionIndex + 1 === sections.length;
+  const isLast = sectionIndex + 1 === canvasStore.sections.length;
 
   return (
     <ContextMenu.Content>
-      {actions.map(({ label, icon, action, ...rest }) => {
+      {actions.map(({ label, icon, action, className, ...rest }) => {
         return (
           <ContextMenu.Item
             key={label}
+            soft={!className}
             onClick={() => action(props.id)}
+            className={className}
             {...rest}
           >
             <Icon name={icon as IconName} />
 
-            {label}
+            {translate(label)}
           </ContextMenu.Item>
         );
       })}
 
       <ContextMenu.Separator />
-      <ContextMenu.Label>Move</ContextMenu.Label>
+      <ContextMenu.Label>{tUi('context-menu.move')}</ContextMenu.Label>
       <ContextMenu.Separator />
 
       <ContextMenu.Item
-        onClick={() => commandActions.canvas.moveUp(props.id)}
+        soft
+        onClick={() => commandActions.canvas.section.moveUp(props.id)}
         disabled={isFirst}
       >
         <Icon name="arrow-up" />
-        Up
+        {tUi('context-menu.up')}
       </ContextMenu.Item>
 
       <ContextMenu.Item
-        onClick={() => commandActions.canvas.moveDown(props.id)}
+        soft
+        onClick={() => commandActions.canvas.section.moveDown(props.id)}
         disabled={isLast}
       >
         <Icon name="arrow-down" />
-        Down
+        {tUi('context-menu.down')}
       </ContextMenu.Item>
     </ContextMenu.Content>
   );
-}
+});

@@ -1,32 +1,45 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { object } from '#/utils/object';
+import { observer } from 'mobx-react-lite';
+
 import { GroupFields } from '#/components/organisms/group-fields';
 
 import { Text } from '#/components/atoms/text';
 import { Callout } from '#/components/atoms/callout';
 
-import { useCanvas } from 'hooks';
-import { getDeepObjectProperty } from 'utils';
+import { useCanvas, useTranslateField } from '#/hooks';
 
 import { first_group, second_group } from './fields';
-import { list_items, projects_links } from './content';
+import { projects_links } from './content';
 
 type Projects = keyof typeof projects_links;
 
-export function Currently() {
-  const { currentSection: obj } = useCanvas();
+export const Currently = observer(function Currently() {
+  const canvasStore = useCanvas();
+  const tUi = useTranslations('ui');
+  const translate = useTranslateField();
 
-  const project = getDeepObjectProperty<Projects>(
-    obj,
+  const project = object.deep.get<Projects>(
+    canvasStore.$currentSection,
     'props.content.currently.project'
   )!;
 
   const links = projects_links[project];
 
+  const listItems = [1, 2, 3, 4].map(id => ({
+    id,
+    content: tUi(`music.currently.list-item-${id}`),
+  }));
+
   return (
     <div className="flex flex-col">
-      <Callout tone="warning" className="mb-sm">
-        To show the current music from your Spotify, you will need to:{' '}
+      <Callout className="palette-orange mb-sm">
+        {tUi('music.currently.callout')}{' '}
         <ul className="flex flex-col">
-          {list_items.map(item => (
+          {listItems.map(item => (
             <li
               key={item.id}
               dangerouslySetInnerHTML={{ __html: item.content }}
@@ -40,12 +53,12 @@ export function Currently() {
         <GroupFields key={group.id} {...group} />
       ))}
 
-      <Callout tone="warning" className="mb-sm">
-        Links related to the {project}&apos;s project:
+      <Callout className="palette-orange mb-sm">
+        {tUi('music.currently.links', { project })}
         <div className="flex flex-col">
           {links.map(link => (
             <Text.Link key={link.label} href={link.link} target="_blank">
-              {link.label}
+              {translate(link.label)}
             </Text.Link>
           ))}
         </div>
@@ -56,4 +69,4 @@ export function Currently() {
       ))}
     </div>
   );
-}
+});

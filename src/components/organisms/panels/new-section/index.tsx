@@ -1,18 +1,23 @@
+'use client';
+
+import { observer } from 'mobx-react-lite';
+
 import { IconName } from 'lucide-react/dynamic';
 
 import { Panel } from '#/components/organisms/panel';
 import { DisplayBlock } from '#/components/atoms/display-block';
 
-import { useExtensions } from 'hooks';
-import { PanelsEnum } from 'types';
+import { useExtensions, useTranslateField } from '#/hooks';
+import { PanelsEnum } from '#/types';
 
 import { contents } from './contents';
 
-const PanelNewSection = () => {
-  const { extensions } = useExtensions();
+export const PanelNewSection = observer(function PanelNewSection() {
+  const extensionsStore = useExtensions();
+  const translate = useTranslateField();
 
   const items = Object.values(
-    extensions[PanelsEnum.NEW_SECTION] ?? {}
+    extensionsStore.extensions[PanelsEnum.NEW_SECTION] ?? {}
   ) as typeof contents;
 
   return (
@@ -22,7 +27,12 @@ const PanelNewSection = () => {
           const El = 'href' in rest ? 'a' : 'button';
 
           return (
-            <El key={name} {...rest}>
+            <El
+              key={name}
+              {...rest}
+              aria-label={translate(name)}
+              data-testid={name}
+            >
               <DisplayBlock.Container>
                 <DisplayBlock.Content>
                   <DisplayBlock.Icon
@@ -30,7 +40,7 @@ const PanelNewSection = () => {
                     size={48}
                     className="text-inherit group-hover/test:animate-spin"
                   />
-                  <DisplayBlock.Label>{name}</DisplayBlock.Label>
+                  <DisplayBlock.Label>{translate(name)}</DisplayBlock.Label>
                 </DisplayBlock.Content>
               </DisplayBlock.Container>
             </El>
@@ -39,6 +49,4 @@ const PanelNewSection = () => {
       </div>
     </Panel.Scrollable>
   );
-};
-
-export { PanelNewSection };
+});

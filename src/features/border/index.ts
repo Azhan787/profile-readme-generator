@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import { borderSectionParser } from './parser';
 import { defaultImageSectionConfig } from './default-config';
 
-import { actions } from 'lib/command';
-import { PanelsEnum, Sections } from 'types';
+import { actions } from '#/lib/command';
+import { PanelsEnum, Sections } from '#/types';
 
 const feature = {
   id: Sections.BORDER,
@@ -12,7 +12,7 @@ const feature = {
   presentation: {
     [PanelsEnum.NEW_SECTION]: {
       icon: 'square-dashed-top-solid',
-      onClick: () => actions.canvas.add(Sections.BORDER),
+      onClick: () => actions.canvas.section.add(Sections.BORDER),
       name: 'Border',
     },
 

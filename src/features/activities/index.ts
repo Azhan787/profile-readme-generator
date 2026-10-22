@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import { activitiesSectionParser } from './parser';
 import { defaultActivitiesSectionConfig } from './default-config';
 
-import { actions } from 'lib/command';
-import { PanelsEnum, Sections } from 'types';
+import { actions } from '#/lib/command';
+import { PanelsEnum, Sections } from '#/types';
 
 const feature = {
   id: Sections.ACTIVITIES,
@@ -12,7 +12,7 @@ const feature = {
   presentation: {
     [PanelsEnum.NEW_SECTION]: {
       icon: 'activity',
-      onClick: () => actions.canvas.add(Sections.ACTIVITIES),
+      onClick: () => actions.canvas.section.add(Sections.ACTIVITIES),
       name: 'My activities',
     },
 

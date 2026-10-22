@@ -1,8 +1,12 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
 import { Text } from '#/components/atoms/text';
 import { DropdownMenu } from '#/components/atoms/dropdown-menu';
 
-import { actions } from 'lib/command';
-import { IconProviders } from 'types';
+import { actions } from '#/lib/command';
+import { IconProviders } from '#/types';
 
 type ProvidersProps = {
   icon: string;
@@ -11,13 +15,15 @@ type ProvidersProps = {
 };
 
 export function Providers({ icon, current, available }: ProvidersProps) {
+  const t = useTranslations('ui');
+
   function changeProvider(value: string) {
     return () => {
       if (value === current) return;
 
       const path = `content.icons.${icon}.currentProvider`;
 
-      actions.canvas.edit({ path, value });
+      actions.canvas.section.edit({ path, value });
     };
   }
 
@@ -28,7 +34,7 @@ export function Providers({ icon, current, available }: ProvidersProps) {
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content>
-        <DropdownMenu.Label>Providers</DropdownMenu.Label>
+        <DropdownMenu.Label>{t('techs.providers')}</DropdownMenu.Label>
         <DropdownMenu.Separator />
         {Object.values(IconProviders).map(provider => {
           const isCurrent = provider === current;
@@ -40,6 +46,7 @@ export function Providers({ icon, current, available }: ProvidersProps) {
           return (
             <DropdownMenu.Item
               key={provider}
+              soft
               onClick={changeProvider(provider)}
               disabled={isUnavailable}
             >
@@ -48,7 +55,9 @@ export function Providers({ icon, current, available }: ProvidersProps) {
           );
         })}
         <DropdownMenu.Separator />
-        <DropdownMenu.Item disabled>Current: {current}</DropdownMenu.Item>
+        <DropdownMenu.Item soft disabled>
+          {t('techs.current', { provider: current })}
+        </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   );

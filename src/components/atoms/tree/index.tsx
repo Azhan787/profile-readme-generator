@@ -1,19 +1,21 @@
+import { tailwind } from '#/utils/tailwind';
 import React from 'react';
 import { IconName } from 'lucide-react/dynamic';
 
 import { Icon } from '#/components/atoms/icon';
 import { Text } from '#/components/atoms/text';
 
-import { cn } from 'utils';
-import { actions } from 'lib/command';
+import { actions } from '#/lib/command';
 
 export type TFile = {
   file: string;
   content: string;
+  className?: string;
 };
 
 export type TFolder = {
   name?: string;
+  className?: string;
   files: TFile[];
 };
 
@@ -25,7 +27,10 @@ function Label(props: LabelProps) {
   const { children, className, icon = 'file', ...rest } = props;
 
   return (
-    <div className={cn('flex items-center gap-sm', className)} {...rest}>
+    <div
+      className={tailwind.cn('flex items-center gap-sm', className)}
+      {...rest}
+    >
       <Icon name={icon} size={20} />
 
       <Text.Paragraph className="text-inherit">{children}</Text.Paragraph>
@@ -36,15 +41,20 @@ function Label(props: LabelProps) {
 type FileProps = TFile;
 
 function File(props: FileProps) {
-  const { content, file } = props;
+  const { content, file, className } = props;
 
   function onClick() {
     actions.result.show(content);
   }
 
   return (
-    <button className="flex w-full mt-xs **:cursor-pointer hover:text-tone-foreground-context!">
-      <Label onClick={onClick} icon="file">
+    <button className="flex w-full mt-xs **:cursor-pointer hover:text-palette-ring!">
+      <Label
+        onClick={onClick}
+        icon="file"
+        className={className}
+        data-testid="tree-file"
+      >
         {file}
       </Label>
     </button>
@@ -54,13 +64,15 @@ function File(props: FileProps) {
 type FolderProps = TFolder;
 
 function Folder(props: FolderProps) {
-  const { name, files } = props;
+  const { name, files, className } = props;
 
   const hasFiles = !!files.length;
 
   return hasFiles ? (
     <div>
-      <Label icon="folder">{name}</Label>
+      <Label icon="folder" className={className} data-testid="tree-folder">
+        {name}
+      </Label>
 
       <div className="ml-md">
         {files.map(file => (

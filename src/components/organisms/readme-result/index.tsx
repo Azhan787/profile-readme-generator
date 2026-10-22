@@ -1,49 +1,48 @@
-import { useEffect, useRef, useState } from 'react';
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { useEffect, useRef } from 'react';
 import primsjs from 'prismjs';
 
 import { Icon } from '#/components/atoms/icon';
 import { Tooltip } from '#/components/atoms/tooltip';
 import { Clickable } from '#/components/atoms/clickable';
-import { CopyCurrentFileContent } from '#/components/molecules/copy-current-file-content';
 
-import { command } from 'lib/command';
+import { CopyToClipboard } from '#/components/molecules/copy-to-clipboard';
 
-export function ReadmeResult() {
+type ReadmeResultProps = {
+  content: string;
+};
+
+export function ReadmeResult(props: ReadmeResultProps) {
+  const t = useTranslations('ui');
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const [content, setContent] = useState('');
-
-  function handleShowContent(content: string) {
-    setContent(content);
-  }
 
   useEffect(() => {
     primsjs.highlightAllUnder(containerRef.current!);
-  }, [content]);
-
-  useEffect(() => {
-    const dispose = command.handle('result.show', handleShowContent);
-
-    return () => {
-      dispose();
-    };
-  }, []);
+  }, [props.content]);
 
   return (
     <div ref={containerRef} className="code w-0">
-      <ul className="absolute top-xl right-xl flex bg-background-default">
-        <CopyCurrentFileContent>
+      <ul className="absolute top-xl right-xl flex bg-palette-base">
+        <CopyToClipboard content={props.content}>
           {({ copy, isCopied }) => {
             return (
               <Tooltip
                 key={String(isCopied)}
-                content={isCopied ? 'Copied' : 'Copy File Content'}
+                content={
+                  isCopied
+                    ? t('readme-result.copied-tooltip')
+                    : t('readme-result.copy-tooltip')
+                }
                 position="top"
               >
                 <Clickable.Button
                   onClick={copy}
                   size="icon"
                   variant="icon"
+                  soft
                   className="box-border rounded-full!"
                 >
                   <Icon name={isCopied ? 'check' : 'copy'} />
@@ -51,11 +50,11 @@ export function ReadmeResult() {
               </Tooltip>
             );
           }}
-        </CopyCurrentFileContent>
+        </CopyToClipboard>
       </ul>
 
-      <pre className={`language-html`}>
-        <code className={`language-html`}>{content}</code>
+      <pre className="language-html palette-blue">
+        <code className="language-html">{props.content}</code>
       </pre>
     </div>
   );

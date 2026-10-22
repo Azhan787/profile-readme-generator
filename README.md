@@ -37,6 +37,8 @@
   <a href="https://github.com/maurodesouza/profile-readme-generator/blob/master/LICENSE.md" target="_blank">
     <img alt="Badge showing project license type" src="https://img.shields.io/github/license/maurodesouza/profile-readme-generator?color=f85149">
   </a>
+
+
 </p>
 
 
@@ -58,10 +60,24 @@ Are you tired of manually editing your GitHub profile or missing out on the amaz
 
 **Don't miss out on the opportunity to enhance your GitHub profile.** Give it a try and see for yourself how easy and convenient it is! 😉
 
-
 <p align="center">
 <i>Loved the tool? Please consider <a href="https://www.paypal.com/donate/?hosted_button_id=FR3A2DGVYKGJS">donating 💸</a> to support its continuous<br/> improvement and development!</i>
 </p>
+
+<div align="center">
+  <i>
+  <a href="https://trendshift.io/repositories/11023?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-11023" target="_blank" rel="noopener noreferrer">       <img src="https://trendshift.io/api/badge/repositories/11023" alt="maurodesouza%2Fprofile-readme-generator | Trendshift" width="250" height="55"/>
+  </a>
+  </i>
+<i>
+  <a href="https://trendshift.io/repositories/11023?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-11023" target="_blank" rel="noopener noreferrer">      <img src="https://trendshift.io/api/badge/trendshift/repositories/11023/daily?language=TypeScript" alt="maurodesouza%2Fprofile-readme-generator | Trendshift" width="250" height="55"/>
+  </a>
+</i>
+  <a href="https://trendshift.io/repositories/11023?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-11023" target="_blank" rel="noopener noreferrer">       <img src="https://trendshift.io/api/badge/trendshift/repositories/11023/daily" alt="maurodesouza%2Fprofile-readme-generator | Trendshift" width="250" height="55"/>
+  </a>
+</div>
+
+&#xa0;
 
 https://user-images.githubusercontent.com/54520907/173442002-dafc63ea-321f-4ce2-b349-be490b3a00ff.mp4
 
@@ -83,12 +99,8 @@ https://user-images.githubusercontent.com/54520907/173442002-dafc63ea-321f-4ce2-
   <img width="50" title="Jest" alt="Jest Logo" src="https://raw.githubusercontent.com/maurodesouza/maurodesouza/master/assets/jest-logo.svg">
 </a> &#xa0; &#xa0;
 
-<a href="https://eslint.org">
-  <img  width="50" title="Eslint" alt="Eslint Logo" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/eslint/eslint.png">
-</a> &#xa0; &#xa0;
-
-<a href="https://prettier.io">
-  <img width="50" title="Prettier" alt="Prettier Logo" src="https://prettier.io/icon.png">
+<a href="https://biomejs.dev">
+  <img width="50" title="Biome" alt="Biome Logo" src="https://biomejs.dev/img/favicon.svg">
 </a>
 
 ###
@@ -141,7 +153,8 @@ $ yarn dev
 - `build`: creates an optimized production build of the application;
 - `start`: starts the application in production mode at localhost:3000 (make sure to run the build first);
 - `test`: runs the tests;
-- `lint`: runs eslint in the /src directory.
+- `lint`: runs biome check in the /src directory;
+- `format`: runs biome format in the /src directory.
 
 ## :memo: License ##
 

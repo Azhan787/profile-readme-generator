@@ -1,18 +1,27 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { observer } from 'mobx-react-lite';
+
 import { Icon } from '#/components/atoms/icon';
 import { Tooltip } from '#/components/atoms/tooltip';
 import { Clickable } from '#/components/atoms/clickable';
+import { LanguageSwitcher } from '#/components/molecules/language-switcher';
 
-import { useCanvas } from 'hooks';
-import { PanelsEnum } from 'types';
-import { actions } from 'lib/command';
+import { useCanvas } from '#/hooks';
+import { PanelsEnum } from '#/types';
+import { actions } from '#/lib/command';
 
-export function CanvasActions() {
-  const { sections, previewMode } = useCanvas();
-  const hasSection = !!sections.length;
+export const CanvasActions = observer(function CanvasActions() {
+  const t = useTranslations('ui');
+  const canvasStore = useCanvas();
+  const hasSection = !!canvasStore.sections.length;
 
   const state = (() => {
-    if (previewMode) return { is: 'preview-mode' } as const;
-    if (!previewMode && hasSection) return { is: 'canvas' } as const;
+    if (canvasStore.$isInPreviewMode) return { is: 'preview-mode' } as const;
+    if (!canvasStore.$isInPreviewMode && hasSection)
+      return { is: 'canvas' } as const;
 
     return { is: 'hidden' } as const;
   })();
@@ -21,28 +30,38 @@ export function CanvasActions() {
     <>
       <div className="absolute top-md -left-md w-8 flex flex-col gap-md">
         {state.is !== 'hidden' && (
-          <div className="py-md bg-background-default box-border rounded-full!">
+          <div className="py-md bg-palette-base box-border rounded-full!">
             {state.is === 'preview-mode' && (
               <>
-                <Tooltip position="left" content="Use template" tone="success">
+                <Tooltip
+                  position="left"
+                  content={t('canvas-actions.use-template')}
+                  className="palette-green"
+                >
                   <Clickable.Button
-                    aria-label="Use template"
+                    aria-label={t('canvas-actions.use-template')}
+                    data-testid="canvas-action-use-template"
                     size="icon"
                     variant="icon"
-                    tone="success"
-                    onClick={actions.template.use}
+                    className="palette-green"
+                    onClick={actions.canvas.preview.apply}
                   >
                     <Icon name="check" />
                   </Clickable.Button>
                 </Tooltip>
 
-                <Tooltip position="left" content="Leave preview" tone="danger">
+                <Tooltip
+                  position="left"
+                  content={t('canvas-actions.leave-preview')}
+                  className="palette-danger"
+                >
                   <Clickable.Button
-                    aria-label="Leave preview"
+                    aria-label={t('canvas-actions.leave-preview')}
+                    data-testid="canvas-action-leave-preview"
                     size="icon"
                     variant="icon"
-                    tone="danger"
-                    onClick={() => actions.template.preview()}
+                    className="palette-danger"
+                    onClick={() => actions.canvas.preview.sections()}
                   >
                     <Icon name="x" />
                   </Clickable.Button>
@@ -54,14 +73,15 @@ export function CanvasActions() {
               <>
                 <Tooltip
                   position="left"
-                  content="Reorder Sections"
-                  tone="brand"
+                  content={t('canvas-actions.reorder-sections')}
+                  className="palette-blue"
                 >
                   <Clickable.Button
-                    aria-label="Reorder Sections"
+                    aria-label={t('canvas-actions.reorder-sections')}
+                    data-testid="canvas-action-reorder-sections"
                     size="icon"
                     variant="icon"
-                    tone="brand"
+                    className="palette-blue"
                     onClick={() =>
                       actions.panel.right.show(PanelsEnum.REORDER_SECTIONS)
                     }
@@ -69,13 +89,18 @@ export function CanvasActions() {
                     <Icon name="arrow-up-down" />
                   </Clickable.Button>
                 </Tooltip>
-                <Tooltip position="left" content="Clear canvas" tone="danger">
+                <Tooltip
+                  position="left"
+                  content={t('canvas-actions.clear-canvas')}
+                  className="palette-danger"
+                >
                   <Clickable.Button
-                    aria-label="Clear canvas"
+                    aria-label={t('canvas-actions.clear-canvas')}
+                    data-testid="canvas-action-clear-canvas"
                     size="icon"
                     variant="icon"
-                    tone="danger"
-                    onClick={actions.canvas.clear}
+                    className="palette-danger"
+                    onClick={actions.canvas.sections.clear}
                   >
                     <Icon name="trash" />
                   </Clickable.Button>
@@ -85,38 +110,55 @@ export function CanvasActions() {
           </div>
         )}
 
-        <div className="py-md bg-background-default box-border rounded-full!">
-          <Tooltip position="left" content="Open settings panel" tone="brand">
+        <div className="py-md bg-palette-base box-border rounded-full!">
+          <Tooltip
+            position="left"
+            content={t('canvas-actions.open-settings')}
+            className="palette-blue"
+          >
             <Clickable.Button
-              aria-label="Open settings panel"
+              aria-label={t('canvas-actions.open-settings')}
+              data-testid="canvas-action-open-settings"
               size="icon"
               variant="icon"
-              tone="brand"
+              className="palette-blue"
               onClick={() => actions.panel.right.show(PanelsEnum.USER_SETTINGS)}
             >
               <Icon name="settings" />
             </Clickable.Button>
           </Tooltip>
 
-          <Tooltip position="left" content="Toggle Theme" tone="brand">
+          <Tooltip
+            position="left"
+            content={t('canvas-actions.toggle-theme')}
+            className="palette-blue"
+          >
             <Clickable.Button
-              aria-label="Toggle Theme"
+              aria-label={t('canvas-actions.toggle-theme')}
+              data-testid="canvas-action-toggle-theme"
               size="icon"
               variant="icon"
-              tone="brand"
+              className="palette-blue"
               onClick={actions.theme.toggle}
             >
               <Icon name="sun-moon" />
             </Clickable.Button>
           </Tooltip>
 
-          <Tooltip position="left" content="Import README" tone="brand">
+          <LanguageSwitcher />
+
+          <Tooltip
+            position="left"
+            content={t('canvas-actions.import-readme')}
+            className="palette-blue"
+          >
             <Clickable.Button
-              aria-label="Import README"
+              aria-label={t('canvas-actions.import-readme')}
+              data-testid="canvas-action-import-readme"
               size="icon"
               variant="icon"
-              tone="brand"
-              onClick={actions.canvas.loadImportFile}
+              className="palette-blue"
+              onClick={actions.canvas.import.loadFile}
             >
               <Icon name="upload-cloud" />
             </Clickable.Button>
@@ -129,10 +171,10 @@ export function CanvasActions() {
             style={{
               display: 'none',
             }}
-            onChange={actions.canvas.import}
+            onChange={actions.canvas.import.apply}
           />
         </div>
       </div>
     </>
   );
-}
+});

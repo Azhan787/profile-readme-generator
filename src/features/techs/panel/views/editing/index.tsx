@@ -1,3 +1,8 @@
+'use client';
+
+import { object } from '#/utils/object';
+import { observer } from 'mobx-react-lite';
+
 import { useRef } from 'react';
 import { AnimatePresence, Reorder } from 'framer-motion';
 
@@ -5,12 +10,12 @@ import { GroupFields } from '#/components/organisms/group-fields';
 import { Panel } from '#/components/organisms/panel';
 import { IconEditor, IconEditorRef } from '#/components/molecules/icon-editor';
 
-import { actions } from 'lib/command';
-import { getDeepObjectProperty } from 'utils';
-import { useCanvas, useForceUpdate } from 'hooks';
+import { actions } from '#/lib/command';
+
+import { useCanvas, useForceUpdate } from '#/hooks';
 
 import { fields } from './fields';
-import { EditableIcon } from 'types';
+import { EditableIcon } from '#/types';
 
 import { Variants } from './variants';
 import { Providers } from './providers';
@@ -19,14 +24,14 @@ type Icons = {
   [key: string]: EditableIcon;
 };
 
-export function Editing() {
+export const Editing = observer(function Editing() {
   const iconEditorRefs = useRef<IconEditorRef[]>([]);
 
   const forceUpdate = useForceUpdate();
-  const { currentSection } = useCanvas();
+  const canvasStore = useCanvas();
 
-  const selectedIcons = getDeepObjectProperty<Icons>(
-    currentSection,
+  const selectedIcons = object.deep.get<Icons>(
+    canvasStore.$currentSection,
     'props.content.icons'
   )!;
 
@@ -37,14 +42,12 @@ export function Editing() {
     const path = 'content.icons';
 
     const value = order.reduce((obj, name) => {
-      const finded = icons.find(icon => icon[0] === name)!;
-
-      obj[finded[0]] = finded[1];
-
+      const found = icons.find(icon => icon[0] === name)!;
+      obj[found[0]] = found[1];
       return obj;
     }, {} as Icons);
 
-    actions.canvas.edit({ path, value });
+    actions.canvas.section.edit({ path, value });
     setTimeout(forceUpdate, 200);
   }
 
@@ -117,4 +120,4 @@ export function Editing() {
       </AnimatePresence>
     </Panel.Scrollable>
   );
-}
+});

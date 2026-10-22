@@ -1,22 +1,29 @@
-import { actions as commandActions } from 'lib/command';
+import { actions as commandActions } from '#/lib/command';
 
-const actions = [
+type Action = {
+  label: string;
+  icon: string;
+  action: (id: string) => void;
+  className?: string;
+};
+
+const actions: Action[] = [
   {
     label: 'Duplicate',
     icon: 'copy',
-    action: commandActions.canvas.duplicate,
+    action: commandActions.canvas.section.duplicate,
   },
   {
     label: 'Edit',
     icon: 'edit-2',
-    action: commandActions.canvas.setCurrentSection,
+    action: commandActions.canvas.section.activate,
   },
   {
     label: 'Delete',
     icon: 'trash',
-    action: commandActions.canvas.remove,
-    tone: 'danger',
+    action: commandActions.canvas.section.remove,
+    className: 'palette-danger',
   },
-] as const;
+];
 
 export { actions };

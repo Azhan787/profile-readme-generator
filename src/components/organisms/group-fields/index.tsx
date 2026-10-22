@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+'use client';
+
+import { object } from '#/utils/object';
+import { observer } from 'mobx-react-lite';
+
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-import { actions } from 'lib/command';
-import { Inputs } from 'types';
-import { useCanvas, useSettings } from 'hooks';
-import { checkDeepObjectValue, getDeepObjectProperty } from 'utils';
+import { actions } from '#/lib/command';
+import { Inputs } from '#/types';
+import { useCanvas, useSettings, useTranslateField } from '#/hooks';
 
 import { variants } from './animations';
 import { GroupFieldsLabel } from './label';
@@ -12,7 +16,7 @@ import { inputMap } from './fields/inputs-map';
 
 type Conditions = {
   path: string;
-  be: any;
+  be: 'equal' | string;
   value: unknown;
 };
 
@@ -33,7 +37,9 @@ type GroupFieldsProps = {
   context?: 'canvas' | 'settings';
 };
 
-export function GroupFields(props: GroupFieldsProps) {
+export const GroupFields = observer(function GroupFields(
+  props: GroupFieldsProps
+) {
   const {
     label,
     columns = 1,
@@ -45,21 +51,40 @@ export function GroupFields(props: GroupFieldsProps) {
 
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { currentSection } = useCanvas();
-  const { settings } = useSettings();
+  const canvasStore = useCanvas();
+  const settingsStore = useSettings();
+  const t = useTranslateField();
 
-  const obj = context === 'canvas' ? currentSection : { props: settings };
+  const translate = (value?: string) => {
+    if (!value) return '';
+
+    return t(value);
+  };
+
+  const obj =
+    context === 'canvas'
+      ? canvasStore.$currentSection
+      : { props: settingsStore.$settings };
 
   function toggleExpansible() {
     setIsExpanded(!isExpanded);
   }
 
   function onChange(value: string | boolean, path: string) {
-    actions[context].edit({ value, path });
+    if (context === 'canvas') {
+      actions.canvas.section.edit({ value, path });
+    } else {
+      actions.settings.edit({ value, path });
+    }
   }
 
   const canRender = conditions
-    ? checkDeepObjectValue({ obj, ...conditions })
+    ? object.deep.check({
+        obj,
+        path: conditions.path,
+        be: conditions.be as 'equal',
+        value: conditions.value,
+      })
     : true;
 
   const isExpansible = !!label && accordion;
@@ -70,7 +95,7 @@ export function GroupFields(props: GroupFieldsProps) {
   return canRender ? (
     <div className="mb-md">
       <GroupFieldsLabel
-        label={label}
+        label={translate(label)}
         animationState={animationState}
         expansible={isExpansible}
         toggleExpansible={toggleExpansible}
@@ -87,16 +112,27 @@ export function GroupFields(props: GroupFieldsProps) {
         >
           {fields.map(field => {
             const Input = inputMap[field.type];
-            const { column, ...rest } = field?.props ?? {};
+            const { column, placeholder, ...rest } = (field?.props ??
+              {}) as Record<string, unknown>;
 
             const canRender = field.conditions
-              ? checkDeepObjectValue({ obj, ...field.conditions })
+              ? object.deep.check({
+                  obj,
+                  path: field.conditions.path,
+                  be: field.conditions.be as 'equal',
+                  value: field.conditions.value,
+                })
               : true;
 
-            const defaultValue = getDeepObjectProperty<any>(
-              obj?.props,
-              field.path
-            );
+            const defaultValue = object.deep.get(obj?.props, field.path) as
+              | string
+              | boolean
+              | undefined;
+
+            const translatedPlaceholder =
+              typeof placeholder === 'string'
+                ? translate(placeholder)
+                : undefined;
 
             return canRender ? (
               <motion.div
@@ -105,10 +141,15 @@ export function GroupFields(props: GroupFieldsProps) {
                 style={{ gridColumn: column as string }}
               >
                 <Input
-                  label={field.label}
+                  label={translate(field.label)}
+                  placeholder={translatedPlaceholder}
                   value={defaultValue}
-                  onChange={value => onChange(value, field.path)}
+                  onChange={value =>
+                    onChange(value as string | boolean, field.path)
+                  }
                   {...rest}
+                  data-testid={field.path}
+                  aria-label={translate(field.label)}
                 />
               </motion.div>
             ) : null;
@@ -117,4 +158,4 @@ export function GroupFields(props: GroupFieldsProps) {
       </motion.div>
     </div>
   ) : null;
-}
+});

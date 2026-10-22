@@ -1,3 +1,8 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+import { tailwind } from '#/utils/tailwind';
 import React, { useEffect, useState } from 'react';
 
 import { Text } from '#/components/atoms/text';
@@ -6,8 +11,7 @@ import { Command } from '#/components/atoms/command';
 import { Popover } from '#/components/atoms/popover';
 import { Clickable } from '#/components/atoms/clickable';
 import { Input } from '#/components/atoms/field-input';
-
-import { cn } from 'utils';
+import { useTranslateField } from '#/hooks';
 
 type ComboboxOption = {
   label: string;
@@ -23,8 +27,6 @@ type ComboboxProps = {
   onChange?: (value: ComboboxOption) => void;
 } & Omit<React.ComponentProps<typeof Input>, 'onChange'>;
 
-const DEFAULT_PLACEHOLDER = 'Chose an option';
-
 export function Combobox(props: ComboboxProps) {
   const {
     options = [],
@@ -33,8 +35,12 @@ export function Combobox(props: ComboboxProps) {
     label,
     error,
     className,
+    placeholder,
     ...rest
   } = props;
+
+  const tUi = useTranslations('ui');
+  const translate = useTranslateField();
 
   function getOptionByValue(value?: string) {
     if (!value) return undefined;
@@ -52,21 +58,31 @@ export function Combobox(props: ComboboxProps) {
   }, [value]);
 
   return (
-    <div className={cn('w-full flex flex-col items-start gap-xs', className)}>
+    <div
+      className={tailwind.cn(
+        'w-full flex flex-col items-start gap-xs',
+        className
+      )}
+    >
       {label && <Text.Label>{label}</Text.Label>}
 
       <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
         <Popover.Trigger asChild>
           <div className="relative w-full">
             <Input
-              placeholder={DEFAULT_PLACEHOLDER}
-              value={selectedOption?.label}
+              placeholder={
+                placeholder || tUi('field-combobox.choose-placeholder')
+              }
+              value={
+                selectedOption ? translate(selectedOption.label) : undefined
+              }
               {...rest}
             />
 
             <Clickable.Button
               size="icon"
               variant="icon"
+              soft
               className="absolute right-1 bottom-0.5"
             >
               <Icon name="chevrons-up-down" />
@@ -75,9 +91,11 @@ export function Combobox(props: ComboboxProps) {
         </Popover.Trigger>
         <Popover.Content className="w-(--radix-popover-trigger-width) p-0">
           <Command.Root>
-            <Command.Input placeholder="Search..." />
+            <Command.Input
+              placeholder={tUi('field-combobox.search-placeholder')}
+            />
             <Command.List>
-              <Command.Empty>No framework found.</Command.Empty>
+              <Command.Empty>{tUi('field-combobox.empty')}</Command.Empty>
               <Command.Group>
                 {options.map(option => (
                   <Command.Item
@@ -92,7 +110,7 @@ export function Combobox(props: ComboboxProps) {
                   >
                     <Icon
                       name="check"
-                      className={cn(
+                      className={tailwind.cn(
                         'size-4',
                         selectedOption?.value === option.value
                           ? 'opacity-100'
@@ -100,7 +118,7 @@ export function Combobox(props: ComboboxProps) {
                       )}
                     />
 
-                    {option.label}
+                    {translate(option.label)}
                   </Command.Item>
                 ))}
               </Command.Group>

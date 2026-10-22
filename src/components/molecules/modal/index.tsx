@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+'use client';
 
-import { Renderable } from 'types';
-import { command, actions } from 'lib/command';
+import { useEffect, useState } from 'react';
+
+import { Renderable } from '#/types';
+import { command, actions } from '#/lib/command';
 
 import { Dialog } from '#/components/atoms/dialog';
 import { FlexibleRender } from '#/components/helpers/flexible-render';
@@ -10,11 +12,11 @@ export function Modal() {
   const [Modal, setModal] = useState<Renderable>();
 
   function onOpenModal(modal: Renderable) {
-    setModal(modal);
+    setModal(() => modal);
   }
 
   function onCloseModal() {
-    setModal(undefined);
+    setModal(() => undefined);
   }
 
   useEffect(() => {

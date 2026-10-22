@@ -1,3 +1,7 @@
+'use client';
+
+import { observer } from 'mobx-react-lite';
+
 import { useDragControls } from 'framer-motion';
 import { IconName } from 'lucide-react/dynamic';
 
@@ -6,9 +10,9 @@ import { Tile } from '#/components/atoms/tile';
 import { Text } from '#/components/atoms/text';
 import { Clickable } from '#/components/atoms/clickable';
 
-import { useExtensions } from 'hooks';
-import { CanvasSection } from 'types';
-import { actions } from 'lib/command';
+import { useExtensions, useTranslateField } from '#/hooks';
+import { CanvasSection } from '#/types';
+import { actions } from '#/lib/command';
 
 type ItemProps = {
   data: CanvasSection;
@@ -17,16 +21,16 @@ type ItemProps = {
   first: boolean;
 };
 
-export function Item(props: ItemProps) {
+export const Item = observer(function Item(props: ItemProps) {
   const { data, first, last } = props;
   const dragControls = useDragControls();
 
-  const { extensions } = useExtensions();
+  const extensionsStore = useExtensions();
+  const translate = useTranslateField();
 
-  const featureData = extensions['new-section'][data.type] as Record<
-    string,
-    string
-  >;
+  const featureData = extensionsStore.extensions['new-section'][
+    data.type
+  ] as Record<string, string>;
 
   function extractSectionProp() {
     if (data.type === 'text') {
@@ -44,6 +48,8 @@ export function Item(props: ItemProps) {
       dragListener={false}
       dragControls={dragControls}
       layout
+      data-testid="reorder-item"
+      data-sectionid={data.id}
     >
       <Tile.Container>
         <Tile.Drag onPointerDown={event => dragControls.start(event)} />
@@ -54,7 +60,7 @@ export function Item(props: ItemProps) {
 
         <Tile.Content className="flex justify-center flex-col min-w-0">
           <Tile.Label className="flex items-center  gap-xs">
-            {data.type.replace('-', ' ')}
+            {translate(featureData.name)}
           </Tile.Label>
 
           {content && (
@@ -68,8 +74,9 @@ export function Item(props: ItemProps) {
           <Clickable.Button
             size="icon"
             variant="icon"
+            soft
             disabled={first}
-            onClick={() => actions.canvas.moveUp(data.id)}
+            onClick={() => actions.canvas.section.moveUp(data.id)}
           >
             <Icon name="arrow-up" />
           </Clickable.Button>
@@ -77,8 +84,9 @@ export function Item(props: ItemProps) {
           <Clickable.Button
             size="icon"
             variant="icon"
+            soft
             disabled={last}
-            onClick={() => actions.canvas.moveDown(data.id)}
+            onClick={() => actions.canvas.section.moveDown(data.id)}
           >
             <Icon name="arrow-down" />
           </Clickable.Button>
@@ -86,4 +94,4 @@ export function Item(props: ItemProps) {
       </Tile.Container>
     </Tile.Sortable>
   );
-}
+});
